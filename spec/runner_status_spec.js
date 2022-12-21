@@ -1,7 +1,4 @@
 /* eslint-disable */
-const mockJiraIssueKey = jest.fn(() => 'ABC-123');
-jest.mock('../src/jira_issue_key', () => mockJiraIssueKey);
-
 const mockFetchIssue = {
   jiraLabels: jest.fn().mockImplementation((story, user, token, url) => {
     return ['test-required', 'test_waiting'];
@@ -28,13 +25,19 @@ jest.mock('../src/fetch_issue', () => {
   return mockFetchIssue;
 });
 
-let mockCoreLabels = {
+const mockCoreLabels = {
   getInput: jest.fn().mockImplementation((name) => {
     if (name == 'status_or_labels') {
-      return 'labels';
+      return 'status';
     }
     if (name == 'jira_boards') {
-      return '';
+      return 'PLAT,ABC';
+    }
+    if (name == 'branch_name') {
+      return 'ABC-123-Branch-status-test';
+    }
+    if (name == 'merge_statuses') {
+      return 'Completed,Done';
     }
     if (name == 'default_labels') {
       return 'design-required|product-required';
@@ -58,18 +61,17 @@ jest.mock('@actions/core', () => {
 
 const run = require('../src/runner');
 
-describe('run with labels', () => {
+describe('run', () => {
   beforeEach(async () => {
     await run();
   });
 
   it('should call getJiraIssueKey with the message text', function () {
-    expect(mockCoreLabels.getInput).toHaveBeenCalledWith('commit_message');
-    expect(mockJiraIssueKey).toHaveBeenCalledWith('commit_message');
+    expect(mockCoreLabels.getInput).toHaveBeenCalledWith('merge_statuses');
   });
 
   it('should call jiraLabels with the jira story and access parameters', function () {
-    expect(mockFetchIssue.jiraLabels).toHaveBeenCalledWith(
+    expect(mockFetchIssue.jiraStatus).toHaveBeenCalledWith(
       'ABC-123',
       'jira_user',
       'jira_token',
@@ -79,7 +81,7 @@ describe('run with labels', () => {
 
   it('should add the default labels and get the unsatisfied requirements', function () {
     expect(mockCoreLabels.setFailed).toHaveBeenCalledWith(
-      'Jira ticket indicates the following labels are still needed: test-approved, design-approved, product-approved'
+      `Pull request should not be merged yet based on current ticket status: In Progress`
     );
   });
 });

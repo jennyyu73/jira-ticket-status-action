@@ -24,6 +24,7 @@ jobs:
       - name: Check Jira Ticket Labels
         uses: g2crowd/required-approvals-action@v1.6
         with:
+          status_or_labels: labels
           commit_message: ${{ github.event.commits[0]['message'] }}
           jira_user: ${{secrets.JIRANAME}}
           jira_token: ${{secrets.JIRATOKEN}}
@@ -33,11 +34,11 @@ jobs:
 # Running Tests
 
 ```bash
-yarn install
-yarn test
+npm install
+npm test
 ```
 
-# Ready for realese
+# Ready for release
 
 1. Install `vercel/ncc` by running this command in your terminal. `npm i -g @vercel/ncc`
 

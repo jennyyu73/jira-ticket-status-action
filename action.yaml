@@ -1,9 +1,12 @@
 name: 'Required JIRA Approvals'
-description: 'Check labels for convention ending with -required/-approved'
+description: 'Check labels for convention ending with -required/-approved, check statuses of issues'
 inputs:
   commit_message:
-    description: The commit message that contains the JIRA story.
+    description: The commit message that (may) contain the JIRA issue key.
     required: true
+  branch_name:
+    description: The branch name that (may) contain the JIRA issue key.
+    required: true 
   jira_user:
     description: The email of the jira user.
     required: true
@@ -13,6 +16,13 @@ inputs:
   jira_url:
     description: The base URL for jira
     required: true
+  jira_boards:
+    description: A comma-separated string of which JIRA board the issue must come from
+    required: false
+  status_or_labels:
+    description: Indicate whether we should check for status, labels, or both. 
+    required: false
+    default: 'status'
   default_labels:
     description: Assumed required labels
     required: false
@@ -25,6 +35,9 @@ inputs:
     description: Append this to the end of a label to mark it approved
     required: false
     default: 'approved'
+  merge_statuses:
+    description: Comma-separated string of statuses the ticket must be in for the corresponding PR to be mergeable
+    required: false
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
