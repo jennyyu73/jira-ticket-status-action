@@ -1,4 +1,4 @@
-const jiraLabels = require('../src/fetch_labels');
+const { jiraLabels } = require('../src/fetch_issue');
 
 const mockJira = {
   findIssue: jest.fn().mockImplementation((story) => {
