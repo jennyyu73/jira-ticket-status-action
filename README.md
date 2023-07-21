@@ -23,7 +23,7 @@ jobs:
         with:
           commit_message: ${{ github.event.commits[0]['message'] }}
           branch_name: ${{ github.head_ref || github.ref_name }} 
-          jira_user: github_jira_auth@subtlemedical.com
+          jira_user: JIRA_USER@gmail.com
           jira_token: ${{ secrets.gh_jira_auth }}
           jira_url: MYORG.atlassian.net
           jira_boards: MYBOARD
